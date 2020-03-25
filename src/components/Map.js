@@ -1,18 +1,11 @@
 import React from 'react';
-
-const GOOGLE_MAP_API_KEY = process.env.GOOGLE_MAP_API_KEY;
+const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 class GoogleMap extends React.Component {
   constructor(props) {
     super(props);
 
     this.getLocation = this.getLocation.bind(this);
-
-    this.state = {
-      lat: 0,
-      lng: 0,
-      zoom: 2,
-    };
   }
 
   googleMapRef = React.createRef();
@@ -38,15 +31,16 @@ class GoogleMap extends React.Component {
   getLocation(position) {
     let lat = position.coords.latitude;
     let lng = position.coords.longitude;
-    this.setState({lat: lat, lng: lng, zoom: 8});
+    this.googleMap.setCenter({lat: lat, lng: lng});
+    this.googleMap.setZoom(5);
   }
 
   createGoogleMap = () =>
     new window.google.maps.Map(this.googleMapRef.current, {
-      zoom: this.state.zoom,
+      zoom: 2,
       center: {
-        lat:  this.state.lat,
-        lng:  this.state.lng,
+        lat:  0,
+        lng:  0,
       },
       disableDefaultUI: true,
     });
