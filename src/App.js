@@ -5,9 +5,19 @@ import GoogleMap from './components/Map';
 function App() {
   return (
     <div className="App">
-      <GoogleMap/>
+
+
+
     </div>
   );
 }
 
+async function fetchData(url) {
+  let response = await fetch(url);
+  let data = await response.json()
+  return data;
+}
+
+
+export { fetchData };
 export default App;
