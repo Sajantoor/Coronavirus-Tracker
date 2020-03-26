@@ -1,10 +1,13 @@
 import React from 'react';
+import DeckGL from '@deck.gl/react';
+import {GeoJsonLayer} from '@deck.gl/layers';
+import { fetchData } from '../App';
+import data from '../data.json';
 const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 class GoogleMap extends React.Component {
   constructor(props) {
     super(props);
-
     this.getLocation = this.getLocation.bind(this);
   }
 
@@ -12,14 +15,15 @@ class GoogleMap extends React.Component {
 
   componentDidMount() {
     const googleMapScript = document.createElement('script');
-    googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&libraries=places`;
+    googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&libraries=visualization`;
     window.document.body.appendChild(googleMapScript);
 
     googleMapScript.addEventListener('load', () => {
       this.googleMap = this.createGoogleMap();
-    });
+      this.getData();
+      this.requestLocation();
 
-    this.requestLocation();
+    });
   }
 
   requestLocation() {
@@ -44,6 +48,11 @@ class GoogleMap extends React.Component {
       },
       disableDefaultUI: true,
     });
+
+
+  getData() {
+
+  }
 
   render() {
     return (
