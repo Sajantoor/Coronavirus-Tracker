@@ -1,9 +1,31 @@
 import React from 'react';
-import DeckGL from '@deck.gl/react';
-import {GeoJsonLayer} from '@deck.gl/layers';
 import { fetchData } from '../App';
+import { GoogleMapsOverlay } from '@deck.gl/google-maps';
+import { ScatterplotLayer } from '@deck.gl/layers';
+import { HeatmapLayer } from '@deck.gl/aggregation-layers';
 import data from '../data.json';
+
 const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
+
+const scatterPlotLayer = () => new ScatterplotLayer({
+  id: 'scatter',
+  data: data.locations,
+  opacity: 0.8,
+  filled: true,
+  radiusMaxPixels: 5,
+  radiusMinPixels: 3,
+  getPosition: d => [parseInt(d.coordinates.longitude), parseInt(d.coordinates.latitude)],
+  getFillColor: d => d.latest.confirmed > 10 ? [200, 0, 40, 150] : [255, 140, 0, 100],
+});
+
+const heatMapLayer = () => new HeatmapLayer({
+  id: 'heat',
+  data: data.locations,
+  getPosition: d => [parseInt(d.coordinates.longitude), parseInt(d.coordinates.latitude)],
+  getWeight: d => parseInt(d.latest.confirmed),
+  radiusPixels: 60,
+  threshold: 0.005,
+});
 
 class GoogleMap extends React.Component {
   constructor(props) {
@@ -22,7 +44,7 @@ class GoogleMap extends React.Component {
       this.googleMap = this.createGoogleMap();
       this.getData();
       this.requestLocation();
-
+      this.initLayers();
     });
   }
 
@@ -37,6 +59,17 @@ class GoogleMap extends React.Component {
     let lng = position.coords.longitude;
     this.googleMap.setCenter({lat: lat, lng: lng});
     this.googleMap.setZoom(5);
+  }
+
+  initLayers() {
+    const overlays = new GoogleMapsOverlay({
+      layers: [
+        scatterPlotLayer(),
+        heatMapLayer(),
+      ]
+    });
+
+    overlays.setMap(this.googleMap);
   }
 
   createGoogleMap = () =>
@@ -59,7 +92,7 @@ class GoogleMap extends React.Component {
       <div
         id="google-map"
         ref={this.googleMapRef}
-        style={{ width: '100vw', height: '100vh' }}
+        style={{ width: '100vw', height: '100vh'}}
       />
     )
   }

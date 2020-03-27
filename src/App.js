@@ -5,9 +5,7 @@ import GoogleMap from './components/Map';
 function App() {
   return (
     <div className="App">
-
-
-
+      <GoogleMap/>
     </div>
   );
 }
