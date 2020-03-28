@@ -1,9 +1,11 @@
 import React from 'react';
-import { fetchData } from '../App';
+import DeckGL from '@deck.gl/react';
 import { GoogleMapsOverlay } from '@deck.gl/google-maps';
-import { ScatterplotLayer } from '@deck.gl/layers';
+import { ScatterplotLayer, GeoJsonLayer } from '@deck.gl/layers';
 import { HeatmapLayer } from '@deck.gl/aggregation-layers';
 import data from '../data.json';
+import geoJson from '../geo.json';
+import mapStyles from './map-styles';
 
 const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
@@ -23,9 +25,51 @@ const heatMapLayer = () => new HeatmapLayer({
   data: data.locations,
   getPosition: d => [parseInt(d.coordinates.longitude), parseInt(d.coordinates.latitude)],
   getWeight: d => parseInt(d.latest.confirmed),
-  radiusPixels: 60,
+  radiusPixels: 50,
   threshold: 0.005,
 });
+
+const geoJsonLayer = () => new GeoJsonLayer({
+  id: 'geo-json',
+  data: geoJson,
+  stroked: false,
+  filled: true,
+  extruded: true,
+  lineWidthScale: 20,
+  lineWidthMinPixels: 2,
+  getFillColor: d => getWeight(d.properties.name),
+  getRadius: 100,
+})
+
+const leader = data.locations.find(element => element.country === "US").latest.confirmed;
+
+function getColor(value) {
+  const low = [255, 158, 158, 255];
+  const high = [163, 28, 28, 255];
+
+  // delta represents where the value sits between the min and max
+  let delta = value / leader;
+
+  let color = [];
+  for (var i = 0; i < 3; i++) {
+    color[i] = (high[i] - low[i]) * delta + low[i];
+  }
+
+  return high;
+
+}
+
+function getWeight(name) {
+  try {
+    let obj = data.locations.find(element => element.province === name || element.country === name);
+    let weight = obj.latest.confirmed;
+    let color = getColor(weight);
+    return color;
+  } catch (error) {
+    return 0;
+  }
+}
+
 
 class GoogleMap extends React.Component {
   constructor(props) {
@@ -64,6 +108,7 @@ class GoogleMap extends React.Component {
   initLayers() {
     const overlays = new GoogleMapsOverlay({
       layers: [
+        // geoJsonLayer(),
         scatterPlotLayer(),
         heatMapLayer(),
       ]
@@ -80,6 +125,7 @@ class GoogleMap extends React.Component {
         lng:  0,
       },
       disableDefaultUI: true,
+      styles: mapStyles,
     });
 
 
