@@ -43,9 +43,9 @@ class GoogleMap extends React.Component {
   initLayers() {
     const overlays = new GoogleMapsOverlay({
       layers: [
+        heatMapLayer(),
         scatterPlotLayer(),
-        textLayer(),
-        // heatMapLayer(),
+        // textLayer(),
       ]
     });
 
