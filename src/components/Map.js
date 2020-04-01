@@ -10,6 +10,16 @@ class GoogleMap extends React.Component {
   constructor(props) {
     super(props);
     this.getLocation = this.getLocation.bind(this);
+
+    this.state = {
+      layers: [
+        heatMapLayer(),
+        scatterPlotLayer(),
+      ],
+
+      heatMap: true,
+      scatterPlot: true,
+    }
   }
 
   googleMapRef = React.createRef();
@@ -41,15 +51,11 @@ class GoogleMap extends React.Component {
   }
 
   initLayers() {
-    const overlays = new GoogleMapsOverlay({
-      layers: [
-        heatMapLayer(),
-        scatterPlotLayer(),
-        // textLayer(),
-      ]
+    this.overlay = new GoogleMapsOverlay({
+      layers: this.state.layers,
     });
 
-    overlays.setMap(this.googleMap);
+    this.overlay.setMap(this.googleMap);
   }
 
   createGoogleMap = () =>
@@ -68,13 +74,37 @@ class GoogleMap extends React.Component {
 
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.heatMap !== prevState.heatMap || this.state.scatterPlot !== prevState.scatterPlot) {
+      this.changeLayers();
+    }
+  }
+
+  changeLayers() {
+
+    const layers = [
+      this.state.heatMap ? heatMapLayer() : null,
+      this.state.scatterPlot ? scatterPlotLayer() : null,
+    ]
+
+    this.setState({layers: layers});
+
+    this.overlay.setProps({layers: layers});
+  }
+
+
   render() {
     return (
-      <div
-        id="google-map"
-        ref={this.googleMapRef}
-        style={{ width: '100vw', height: '100vh'}}
-      />
+      <div className="map-container">
+        <div
+          id="google-map"
+          ref={this.googleMapRef}
+          style={{ width: '100vw', height: '100vh'}}
+        />
+      <button onClick={() => this.state.heatMap ? this.setState({heatMap: false}) : this.setState({heatMap: true})}> Heat Map </button>
+
+      </div>
+
     )
   }
 }
