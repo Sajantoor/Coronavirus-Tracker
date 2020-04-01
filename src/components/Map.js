@@ -75,13 +75,13 @@ class GoogleMap extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // OPTIMIZE: Better way to check if the booleans have changed here
     if (this.state.heatMap !== prevState.heatMap || this.state.scatterPlot !== prevState.scatterPlot) {
       this.changeLayers();
     }
   }
 
   changeLayers() {
-
     const layers = [
       this.state.heatMap ? heatMapLayer() : null,
       this.state.scatterPlot ? scatterPlotLayer() : null,
@@ -101,10 +101,9 @@ class GoogleMap extends React.Component {
           ref={this.googleMapRef}
           style={{ width: '100vw', height: '100vh'}}
         />
-      <button onClick={() => this.state.heatMap ? this.setState({heatMap: false}) : this.setState({heatMap: true})}> Heat Map </button>
 
+      <button onClick={() => this.setState({heatMap: !this.state.heatMap})}> Heat Map </button>
       </div>
-
     )
   }
 }
