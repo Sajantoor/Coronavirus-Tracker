@@ -3,6 +3,10 @@ import DeckGL from '@deck.gl/react';
 import { scatterPlotLayer, heatMapLayer, textLayer } from './Deck';
 import { GoogleMapsOverlay } from '@deck.gl/google-maps';
 import mapStyles from './map-styles';
+import data from '../data.json';
+import IconClusterLayer from  './cluster';
+import iconMapping from '../data/location-icon-mapping.json';
+import iconAtlas from '../data/location-icon-atlas.png';
 
 const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
@@ -40,12 +44,30 @@ class GoogleMap extends React.Component {
     this.googleMap.setZoom(5);
   }
 
+  _renderLayers() {
+    const {
+      data,
+      showCluster = true
+    } = this.props;
+
+    const layerProps = {
+      data,
+      getPosition: d => [parseInt(d.coordinates.longitude), parseInt(d.coordinates.latitude)],
+      iconAtlas,
+      iconMapping,
+    };
+
+    const layer = new IconClusterLayer({...layerProps, id: 'icon-cluster', sizeScale: 60});
+    console.log(layer);
+    return [layer];
+  }
+
   initLayers() {
     const overlays = new GoogleMapsOverlay({
       layers: [
-        heatMapLayer(),
-        scatterPlotLayer(),
-        // textLayer(),
+        // heatMapLayer(),
+        // scatterPlotLayer(),
+        this._renderLayers(),
       ]
     });
 
