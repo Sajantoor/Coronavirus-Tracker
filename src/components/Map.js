@@ -1,10 +1,12 @@
 import React from 'react';
 import DeckGL from '@deck.gl/react';
-import { scatterPlotLayer, heatMapLayer, textLayer } from './Deck';
+import { scatterPlotLayer, heatMapLayer, textLayer, getInfo } from './Deck';
 import { GoogleMapsOverlay } from '@deck.gl/google-maps';
 import mapStyles from './map-styles';
+import { fetchData } from '../App';
 
 const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
+let data;
 
 class GoogleMap extends React.Component {
   constructor(props) {
@@ -12,11 +14,7 @@ class GoogleMap extends React.Component {
     this.getLocation = this.getLocation.bind(this);
 
     this.state = {
-      layers: [
-        heatMapLayer(),
-        scatterPlotLayer(),
-      ],
-
+      layers: [],
       heatMap: true,
       scatterPlot: true,
     }
@@ -33,7 +31,6 @@ class GoogleMap extends React.Component {
       this.googleMap = this.createGoogleMap();
       this.getData();
       this.requestLocation();
-      this.initLayers();
     });
   }
 
@@ -51,11 +48,17 @@ class GoogleMap extends React.Component {
   }
 
   initLayers() {
+    const layers = [
+      heatMapLayer(data),
+      scatterPlotLayer(data),
+    ];
+
     this.overlay = new GoogleMapsOverlay({
-      layers: this.state.layers,
+      layers: layers,
     });
 
     this.overlay.setMap(this.googleMap);
+    this.setState({layers: layers});
   }
 
   createGoogleMap = () =>
@@ -69,9 +72,24 @@ class GoogleMap extends React.Component {
       styles: mapStyles,
     });
 
-
   getData() {
+    const COVID19API = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
 
+    fetchData(COVID19API).then(a => {
+      data = a;
+      getInfo(data);
+      this.initLayers();
+    });
+  }
+
+  changeLayers() {
+    const layers = [
+      this.state.heatMap ? heatMapLayer(data) : null,
+      this.state.scatterPlot ? scatterPlotLayer(data) : null,
+    ]
+
+    this.setState({layers: layers});
+    this.overlay.setProps({layers: layers});
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -80,18 +98,6 @@ class GoogleMap extends React.Component {
       this.changeLayers();
     }
   }
-
-  changeLayers() {
-    const layers = [
-      this.state.heatMap ? heatMapLayer() : null,
-      this.state.scatterPlot ? scatterPlotLayer() : null,
-    ]
-
-    this.setState({layers: layers});
-
-    this.overlay.setProps({layers: layers});
-  }
-
 
   render() {
     return (

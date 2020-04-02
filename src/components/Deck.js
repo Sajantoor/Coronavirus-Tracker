@@ -1,4 +1,3 @@
-import data from '../data.json';
 import { ScatterplotLayer, TextLayer } from '@deck.gl/layers';
 import { HeatmapLayer } from '@deck.gl/aggregation-layers';
 
@@ -9,7 +8,7 @@ const info = {
 }
 
 // some sorting algorithm here instead later
-function getInfo() {
+function getInfo(data) {
   let sum = 0;
   for (var i = 0; i < data.locations.length; i++) {
     if (data.locations[i].latest.confirmed > info.largest) {
@@ -19,8 +18,6 @@ function getInfo() {
 
   info.average = data.latest.confirmed / (data.locations.length + 1);
 }
-
-getInfo();
 
 function calculateSize(value, avgValue, avg, max, min) {
   let ratio = value / avgValue;
@@ -56,7 +53,7 @@ function pickColor(value) {
   return color;
 }
 
-const scatterPlotLayer = () => new ScatterplotLayer({
+const scatterPlotLayer = (data) => new ScatterplotLayer({
   id: 'scatter',
   data: data.locations,
   opacity: 1,
@@ -67,7 +64,7 @@ const scatterPlotLayer = () => new ScatterplotLayer({
   getFillColor: d => pickColor(d.latest.confirmed),
 });
 
-const heatMapLayer = () => new HeatmapLayer({
+const heatMapLayer = (data) => new HeatmapLayer({
   id: 'heat',
   data: data.locations,
   getPosition: d => [parseInt(d.coordinates.longitude), parseInt(d.coordinates.latitude)],
@@ -76,7 +73,7 @@ const heatMapLayer = () => new HeatmapLayer({
   threshold: 0.005,
 });
 
-const textLayer = () => new TextLayer({
+const textLayer = (data) => new TextLayer({
   id: 'text',
   data: data.locations,
   getPosition: d => [parseInt(d.coordinates.longitude), parseInt(d.coordinates.latitude)],
@@ -89,4 +86,4 @@ const textLayer = () => new TextLayer({
 });
 
 
-export { scatterPlotLayer, heatMapLayer, textLayer };
+export { scatterPlotLayer, heatMapLayer, textLayer, getInfo };
