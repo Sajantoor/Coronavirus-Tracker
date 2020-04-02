@@ -73,12 +73,26 @@ class GoogleMap extends React.Component {
     });
 
   getData() {
-    const COVID19API = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
+    const COVID19API_WORLD = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
+    const COVID19API_US = "https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=csbs";
 
-    fetchData(COVID19API).then(a => {
-      data = a;
-      getInfo(data);
-      this.initLayers();
+    fetchData(COVID19API_WORLD).then(worldData => {
+      const filtered = worldData.locations.filter(d => d.country !== "US");
+      worldData.locations = filtered;
+      console.log(worldData);
+
+      // BUG: There's a data point in California which shouldn't be there.
+      // OPTIMIZE:  Data is fetched at the same time to imporve loading times
+      fetchData(COVID19API_US).then(USData => {
+        for (var i = 0; i < USData.locations.length; i++) {
+          worldData.locations.push(USData.locations[i]);
+        }
+
+        data = worldData;
+        console.log(data);
+        getInfo(data);
+        this.initLayers();
+      });
     });
   }
 
