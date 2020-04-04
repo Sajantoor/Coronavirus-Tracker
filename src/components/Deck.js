@@ -9,7 +9,6 @@ const info = {
 
 // some sorting algorithm here instead later
 function getInfo(data) {
-  let sum = 0;
   for (var i = 0; i < data.locations.length; i++) {
     if (data.locations[i].latest.confirmed > info.largest) {
       info.largest = data.locations[i].latest.confirmed;
@@ -48,8 +47,8 @@ function pickColor(value) {
       color[i] = 0;
     }
   }
-  color[3] = 255;
 
+  color[3] = 255;
   return color;
 }
 
