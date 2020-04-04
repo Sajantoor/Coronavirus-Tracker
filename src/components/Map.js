@@ -6,7 +6,11 @@ import mapStyles from './map-styles';
 import { fetchData } from '../App';
 
 const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
-let data;
+
+let data = {
+  latest: {},
+  locations: [],
+};
 
 class GoogleMap extends React.Component {
   constructor(props) {
@@ -15,6 +19,8 @@ class GoogleMap extends React.Component {
 
     this.state = {
       layers: [],
+      usData: false,
+      worldData: false,
       heatMap: true,
       scatterPlot: true,
     }
@@ -47,20 +53,6 @@ class GoogleMap extends React.Component {
     this.googleMap.setZoom(5);
   }
 
-  initLayers() {
-    const layers = [
-      heatMapLayer(data),
-      scatterPlotLayer(data),
-    ];
-
-    this.overlay = new GoogleMapsOverlay({
-      layers: layers,
-    });
-
-    this.overlay.setMap(this.googleMap);
-    this.setState({layers: layers});
-  }
-
   createGoogleMap = () =>
     new window.google.maps.Map(this.googleMapRef.current, {
       zoom: 2,
@@ -77,23 +69,38 @@ class GoogleMap extends React.Component {
     const COVID19API_US = "https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=csbs";
 
     fetchData(COVID19API_WORLD).then(worldData => {
-      const filtered = worldData.locations.filter(d => d.country !== "US");
-      worldData.locations = filtered;
-      console.log(worldData);
+      // removes all US data as US has it's own source and removes NULL island
+      worldData.locations = worldData.locations.filter(d => d.country !== "US").filter(d => d.province !== "Grand Princess").filter(d => (d.coordinates.latitude !== "0" && d.coordinates.longitude !== "0"));
 
-      // BUG: There's a data point in California which shouldn't be there.
-      // OPTIMIZE:  Data is fetched at the same time to imporve loading times
-      fetchData(COVID19API_US).then(USData => {
-        for (var i = 0; i < USData.locations.length; i++) {
-          worldData.locations.push(USData.locations[i]);
-        }
+      for (var i = 0; i < worldData.locations.length; i++) {
+        data.locations.push(worldData.locations[i]);
+      }
 
-        data = worldData;
-        console.log(data);
-        getInfo(data);
-        this.initLayers();
-      });
+      data.latest = worldData.latest;
+      this.setState({worldData: true});
     });
+
+    fetchData(COVID19API_US).then(USData => {
+      for (var i = 0; i < USData.locations.length; i++) {
+        data.locations.push(USData.locations[i]);
+      }
+
+      this.setState({usData: true});
+    });
+  }
+
+  initLayers() {
+    const layers = [
+      heatMapLayer(data),
+      scatterPlotLayer(data),
+    ];
+
+    this.overlay = new GoogleMapsOverlay({
+      layers: layers,
+    });
+
+    this.overlay.setMap(this.googleMap);
+    this.setState({layers: layers});
   }
 
   changeLayers() {
@@ -107,8 +114,18 @@ class GoogleMap extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // OPTIMIZE: Better way to check if the booleans have changed here
-    if (this.state.heatMap !== prevState.heatMap || this.state.scatterPlot !== prevState.scatterPlot) {
+    const state = {...this.state };
+    const stateLayers = this.state.layers.length;
+    const prevStateObj = {...prevState };
+    // ignores layers to avoid max depth limit
+    prevStateObj.layers = 0;
+    state.layers = 0;
+    // init layers is both data sources have been fetched, ignores this if layers have been init
+    if (this.state.usData && this.state.worldData && stateLayers === 0) {
+      getInfo(data);
+      this.initLayers();
+    // checks if anything has been updates and if layers have been init
+    } else if ((JSON.stringify(state) !== JSON.stringify(prevStateObj)) && stateLayers !== 0) {
       this.changeLayers();
     }
   }
