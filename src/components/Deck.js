@@ -8,14 +8,14 @@ const info = {
 }
 
 // some sorting algorithm here instead later
-function getInfo(data) {
+function getInfo(data, dataParameter) {
   for (var i = 0; i < data.locations.length; i++) {
-    if (data.locations[i].latest.confirmed > info.largest) {
-      info.largest = data.locations[i].latest.confirmed;
+    if (data.locations[i].latest[dataParameter] > info.largest) {
+      info.largest = data.locations[i].latest[dataParameter];
     }
   }
 
-  info.average = data.latest.confirmed / (data.locations.length + 1);
+  info.average = data.latest[dataParameter] / (data.locations.length + 1);
 }
 
 function calculateSize(value, avgValue, avg, max, min) {
@@ -48,35 +48,48 @@ function pickColor(value) {
     }
   }
 
-  color[3] = 255;
+  if (value < Math.cbrt(info.average)) {
+    const opacityValue = value / Math.cbrt(info.average);
+    const opacityLimit = 50;
+
+    color[3] = opacityValue * 255;
+
+    if (opacityLimit > color[3]) {
+      color[3] = opacityLimit;
+    }
+
+  } else {
+    color[3] = 255;
+  }
+
   return color;
 }
 
-const scatterPlotLayer = (data) => new ScatterplotLayer({
+const scatterPlotLayer = (data, dataParameter) => new ScatterplotLayer({
   id: 'scatter',
   data: data.locations,
   opacity: 1,
   filled: true,
   radiusMaxPixels: 7,
   radiusMinPixels: 3,
-  getPosition: d => [parseInt(d.coordinates.longitude), parseInt(d.coordinates.latitude)],
-  getFillColor: d => pickColor(d.latest.confirmed),
+  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude), 0],
+  getFillColor: d => pickColor(d.latest[dataParameter]),
 });
 
-const heatMapLayer = (data) => new HeatmapLayer({
+const heatMapLayer = (data, dataParameter) => new HeatmapLayer({
   id: 'heat',
   data: data.locations,
-  getPosition: d => [parseInt(d.coordinates.longitude), parseInt(d.coordinates.latitude)],
-  getWeight: d => parseInt(d.latest.confirmed),
+  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude)],
+  getWeight: d => parseInt(d.latest[dataParameter]),
   radiusPixels: 60,
   threshold: 0.005,
 });
 
-const textLayer = (data) => new TextLayer({
+const textLayer = (data, dataParameter) => new TextLayer({
   id: 'text',
   data: data.locations,
-  getPosition: d => [parseInt(d.coordinates.longitude), parseInt(d.coordinates.latitude)],
-  getText: d => d.latest.confirmed.toString(),
+  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude)],
+  getText: d => d.latest[dataParameter].toString(),
   getSize: 20,
   getAngle: 0,
   getColor: [255, 255, 255, 255],
