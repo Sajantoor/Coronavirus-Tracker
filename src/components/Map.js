@@ -16,7 +16,8 @@ class GoogleMap extends React.Component {
   constructor(props) {
     super(props);
     this.getLocation = this.getLocation.bind(this);
-
+    this.resize = this.resize.bind(this);
+    
     this.state = {
       layers: [],
       worldData: false,
@@ -38,7 +39,14 @@ class GoogleMap extends React.Component {
       this.googleMap = this.createGoogleMap();
       this.getData();
       this.requestLocation();
+      window.google.maps.event.addDomListener(window, 'resize', this.resize);
     });
+  }
+
+  resize() {
+    let currCenter = this.googleMap.getCenter();
+    window.google.maps.event.trigger(this.googleMap, 'resize');
+    this.googleMap.setCenter(currCenter);
   }
 
   requestLocation() {
