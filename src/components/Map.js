@@ -17,7 +17,7 @@ class GoogleMap extends React.Component {
     super(props);
     this.getLocation = this.getLocation.bind(this);
     this.resize = this.resize.bind(this);
-    
+
     this.state = {
       layers: [],
       worldData: false,
@@ -65,12 +65,14 @@ class GoogleMap extends React.Component {
   createGoogleMap = () =>
     new window.google.maps.Map(this.googleMapRef.current, {
       zoom: 2,
+      minZoom: 2,
       center: {
         lat:  0,
         lng:  0,
       },
       disableDefaultUI: true,
       styles: mapStyles,
+      gestureHandling: 'greedy',
     });
 
   getData() {
@@ -84,8 +86,6 @@ class GoogleMap extends React.Component {
       for (var i = 0; i < worldData.locations.length; i++) {
         data.locations.push(worldData.locations[i]);
       }
-
-      console.log(data);
 
       data.latest = worldData.latest;
       this.setState({worldData: true});
@@ -115,6 +115,7 @@ class GoogleMap extends React.Component {
   }
 
   changeLayers() {
+    getInfo(data, this.state.dataParameter);
     const layers = [
       this.state.heatMap ? heatMapLayer(data, this.state.dataParameter) : null,
       this.state.scatterPlot ? scatterPlotLayer(data, this.state.dataParameter) : null,
@@ -144,13 +145,18 @@ class GoogleMap extends React.Component {
   render() {
     return (
       <div className="map-container">
+        <button onClick={() => this.setState({heatMap: !this.state.heatMap})}> Heat Map </button>
+        <button onClick={() => this.setState({scatterPlot: !this.state.scatterPlot})}> Scatterplot </button>
+        <button onClick={() => this.setState({dataParameter: "confirmed"})}> <span role="img" aria-label="confirmed"> 😷 </span></button>
+        <button onClick={() => this.setState({dataParameter: "deaths"})}> <span role="img" aria-label="deaths"> 💀 </span> </button>
+
+
         <div
           id="google-map"
           ref={this.googleMapRef}
           style={{ width: '100vw', height: '100vh'}}
         />
 
-      <button onClick={() => this.setState({heatMap: !this.state.heatMap})}> Heat Map </button>
       </div>
     )
   }
