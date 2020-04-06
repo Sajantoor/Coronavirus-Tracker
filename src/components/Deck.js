@@ -9,6 +9,9 @@ const info = {
 
 // some sorting algorithm here instead later
 function getInfo(data, dataParameter) {
+  info.largest = 0;
+  info.average = 0;
+
   for (var i = 0; i < data.locations.length; i++) {
     if (data.locations[i].latest[dataParameter] > info.largest) {
       info.largest = data.locations[i].latest[dataParameter];
@@ -27,7 +30,6 @@ function calculateSize(value, avgValue, avg, max, min) {
   } else if (size < min) {
     size = min;
   }
-  console.log(size);
   return size;
 }
 
@@ -74,6 +76,9 @@ const scatterPlotLayer = (data, dataParameter) => new ScatterplotLayer({
   radiusMinPixels: 3,
   getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude), 0],
   getFillColor: d => pickColor(d.latest[dataParameter]),
+  updateTriggers: {
+    getFillColor: d => pickColor(d.latest[dataParameter]),
+  }
 });
 
 const heatMapLayer = (data, dataParameter) => new HeatmapLayer({
@@ -83,6 +88,9 @@ const heatMapLayer = (data, dataParameter) => new HeatmapLayer({
   getWeight: d => parseInt(d.latest[dataParameter]),
   radiusPixels: 60,
   threshold: 0.005,
+  updateTriggers: {
+    getWeight: d => parseInt(d.latest[dataParameter]),
+  }
 });
 
 const textLayer = (data, dataParameter) => new TextLayer({
