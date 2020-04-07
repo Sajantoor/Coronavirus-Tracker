@@ -2,8 +2,10 @@ import React from 'react';
 import { scatterPlotLayer, hoverPlotLayer, heatMapLayer, getInfo } from './Deck';
 import { GoogleMapsOverlay } from '@deck.gl/google-maps';
 import mapStyles from './map-styles';
+// eslint-disable-next-line
 import styles from './css/map.css';
 import { fetchData } from '../App';
+import Loading from './Loading';
 
 const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
@@ -148,6 +150,8 @@ class GoogleMap extends React.Component {
   render() {
     return (
       <div className="map-container">
+        {!(this.state.usData && this.state.worldData) && <Loading/>}
+
         <div id="tooltip" style={{position: 'absolute', zIndex: 3}}></div>
         <button
           style={{backgroundColor: this.state.heatMap ? '#FFF' : "#cfcfcf"}}
@@ -157,7 +161,7 @@ class GoogleMap extends React.Component {
           style={{backgroundColor: this.state.scatterPlot ? '#FFF' : "#cfcfcf"}}
           onClick={() => this.setState({scatterPlot: !this.state.scatterPlot})}>
           Scatterplot </button>
-        <div className="divider"/> 
+        <div className="divider"/>
         <button
           style={{backgroundColor: (this.state.dataParameter === "confirmed") ? '#FFF' : "#cfcfcf"}}
           onClick={() => this.setState({dataParameter: "confirmed"})}>
