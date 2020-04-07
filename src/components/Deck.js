@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Tooltip from './Tooltip';
 import { ScatterplotLayer, TextLayer } from '@deck.gl/layers';
 import { HeatmapLayer } from '@deck.gl/aggregation-layers';
 
@@ -74,11 +77,25 @@ const scatterPlotLayer = (data, dataParameter) => new ScatterplotLayer({
   filled: true,
   radiusMaxPixels: 7,
   radiusMinPixels: 3,
-  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude), 0],
+  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude)],
   getFillColor: d => pickColor(d.latest[dataParameter]),
   updateTriggers: {
     getFillColor: d => pickColor(d.latest[dataParameter]),
   }
+});
+
+
+// because there is no good way to change the radius of the hover area.
+const hoverPlotLayer = (data, dataParameter) => new ScatterplotLayer({
+  id: 'hover',
+  data: data.locations,
+  opacity: 0,
+  filled: true,
+  radiusMaxPixels: 50,
+  radiusMinPixels: 30,
+  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude)],
+  onHover: info => setTooltip(info.object, info.x, info.y),
+  pickable: true,
 });
 
 const heatMapLayer = (data, dataParameter) => new HeatmapLayer({
@@ -105,5 +122,30 @@ const textLayer = (data, dataParameter) => new TextLayer({
   getAlignmentBaseline: 'center',
 });
 
+function setTooltip(object, x, y) {
+  const el = document.getElementById('tooltip');
+  if (object) {
+    const lat = parseFloat(object.coordinates.latitude).toFixed(3);
+    const lng = parseFloat(object.coordinates.longitude).toFixed(3);
+    console.log(object);
 
-export { scatterPlotLayer, heatMapLayer, textLayer, getInfo };
+    ReactDOM.render(<Tooltip
+      province={object.province ? object.province : object.county}
+      country={object.country}
+      confirmed={object.latest.confirmed}
+      deaths={object.latest.deaths}
+      lat={lat}
+      lng={lng}
+      update={object.last_updated}
+      />, document.getElementById('tooltip'));
+    // el.innerHTML = object.latest.confirmed;
+    el.style.display = 'block';
+    el.style.left = (x + 10) + 'px';
+    el.style.top = (y + 10) + 'px';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+
+export { scatterPlotLayer, hoverPlotLayer, heatMapLayer, textLayer, getInfo };
