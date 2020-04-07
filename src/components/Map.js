@@ -1,8 +1,8 @@
 import React from 'react';
-import DeckGL from '@deck.gl/react';
-import { scatterPlotLayer, heatMapLayer, textLayer, getInfo } from './Deck';
+import { scatterPlotLayer, hoverPlotLayer, heatMapLayer, getInfo } from './Deck';
 import { GoogleMapsOverlay } from '@deck.gl/google-maps';
 import mapStyles from './map-styles';
+import styles from './css/map.css';
 import { fetchData } from '../App';
 
 const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -72,6 +72,7 @@ class GoogleMap extends React.Component {
       },
       disableDefaultUI: true,
       styles: mapStyles,
+      draggableCursor: 'crosshair',
       gestureHandling: 'greedy',
     });
 
@@ -104,6 +105,7 @@ class GoogleMap extends React.Component {
     const layers = [
       heatMapLayer(data, this.state.dataParameter),
       scatterPlotLayer(data, this.state.dataParameter),
+      hoverPlotLayer(data, this.state.dataParameter),
     ];
 
     this.overlay = new GoogleMapsOverlay({
@@ -119,6 +121,7 @@ class GoogleMap extends React.Component {
     const layers = [
       this.state.heatMap ? heatMapLayer(data, this.state.dataParameter) : null,
       this.state.scatterPlot ? scatterPlotLayer(data, this.state.dataParameter) : null,
+      hoverPlotLayer(data, this.state.dataParameter),
     ]
 
     this.setState({layers: layers});
@@ -145,16 +148,28 @@ class GoogleMap extends React.Component {
   render() {
     return (
       <div className="map-container">
-        <button onClick={() => this.setState({heatMap: !this.state.heatMap})}> Heat Map </button>
-        <button onClick={() => this.setState({scatterPlot: !this.state.scatterPlot})}> Scatterplot </button>
-        <button onClick={() => this.setState({dataParameter: "confirmed"})}> <span role="img" aria-label="confirmed"> 😷 </span></button>
-        <button onClick={() => this.setState({dataParameter: "deaths"})}> <span role="img" aria-label="deaths"> 💀 </span> </button>
-
+        <div id="tooltip" style={{position: 'absolute', zIndex: 3}}></div>
+        <button
+          style={{backgroundColor: this.state.heatMap ? '#FFF' : "#cfcfcf"}}
+          onClick={() => this.setState({heatMap: !this.state.heatMap})}>
+          Heat Map </button>
+        <button
+          style={{backgroundColor: this.state.scatterPlot ? '#FFF' : "#cfcfcf"}}
+          onClick={() => this.setState({scatterPlot: !this.state.scatterPlot})}>
+          Scatterplot </button>
+        <div className="divider"/> 
+        <button
+          style={{backgroundColor: (this.state.dataParameter === "confirmed") ? '#FFF' : "#cfcfcf"}}
+          onClick={() => this.setState({dataParameter: "confirmed"})}>
+          <span role="img" aria-label="confirmed"> 😷 </span> </button>
+        <button
+          style={{backgroundColor: (this.state.dataParameter === "deaths") ? '#FFF' : "#cfcfcf"}}
+          onClick={() => this.setState({dataParameter: "deaths"})}>
+          <span role="img" aria-label="deaths"> 💀 </span> </button>
 
         <div
           id="google-map"
           ref={this.googleMapRef}
-          style={{ width: '100vw', height: '100vh'}}
         />
 
       </div>

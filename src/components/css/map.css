@@ -1,0 +1,47 @@
+body {
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.map-container button {
+  color: #565656;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  background-color: #FFF;
+  font-size: 0.9em;
+  border-radius: 3px;
+  padding: 10px;
+  margin: 10px 2px 2px 10px;
+  z-index: 2;
+  position: relative;
+  display: block;
+  filter: drop-shadow(2px 2px 10px);
+}
+
+.map-container button:first-of-type {
+  margin-top: 20px;
+}
+
+#google-map {
+  position: absolute;
+  top: 0; right: 0; left: 0; bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+.divider {
+  content: '';
+  width: 30px;
+  bottom: 3px;
+  margin: 1px 10px 1px 10px;
+  height: 1px;
+  position: relative;
+  display: inline-block;
+  border: 0;
+  background-color: #666666;
+  box-shadow: none;
+  outline: none;
+  appearance: none;
+  z-index: 3;
+}
