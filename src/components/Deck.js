@@ -24,19 +24,6 @@ function getInfo(data, dataParameter) {
   info.average = data.latest[dataParameter] / (data.locations.length + 1);
 }
 
-function calculateSize(value, avgValue, avg, max, min) {
-  let ratio = value / avgValue;
-  let size = ratio * avg;
-
-  if (size > max) {
-    size = max;
-  } else if (size < min) {
-    size = min;
-  }
-  return size;
-}
-
-
 function pickColor(value) {
   const low = [3, 252, 11];
   const high = [252, 181, 3];
@@ -68,6 +55,11 @@ function pickColor(value) {
   }
 
   return color;
+}
+
+function convertToLocalTime(value) {
+  let date = new Date(value);
+  return date.toLocaleString();
 }
 
 const scatterPlotLayer = (data, dataParameter) => new ScatterplotLayer({
@@ -127,16 +119,15 @@ function setTooltip(object, x, y) {
   if (object) {
     const lat = parseFloat(object.coordinates.latitude).toFixed(3);
     const lng = parseFloat(object.coordinates.longitude).toFixed(3);
-    console.log(object);
 
     ReactDOM.render(<Tooltip
       province={object.province ? object.province : object.county}
       country={object.country}
-      confirmed={object.latest.confirmed}
-      deaths={object.latest.deaths}
+      confirmed={object.latest.confirmed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+      deaths={object.latest.deaths.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
       lat={lat}
       lng={lng}
-      update={object.last_updated}
+      update={convertToLocalTime(object.last_updated)}
       />, document.getElementById('tooltip'));
     // el.innerHTML = object.latest.confirmed;
     el.style.display = 'block';
