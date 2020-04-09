@@ -1,3 +1,4 @@
+
 import React from 'react';
 //eslint-disable-next-line
 import styles from './css/loading.css';
@@ -20,7 +21,6 @@ class Loading extends React.Component {
 
   pickRandom() {
     const index = Math.floor(Math.random()* this.state.messages.length);
-    console.log(index);
     this.setState({index: index});
   }
 
@@ -31,7 +31,7 @@ class Loading extends React.Component {
   render() {
     return(
       <div className="loading">
-        <div class="progress"></div>
+        <div className="progress"></div>
         <h1> Loading 2,500+ COVID-19 (Coronavirus) data points <span role="img" aria-label="sick-emoji">😷</span> </h1>
         <p> {this.state.messages[this.state.index]} </p>
       </div>

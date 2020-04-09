@@ -62,6 +62,47 @@ function convertToLocalTime(value) {
   return date.toLocaleString();
 }
 
+document.addEventListener('mousemove', checkMovement);
+let isHovering = false;
+
+// deck gl doesn't have any way to check if not hovering, so looks at mouse movement vs deck gl's hovering to determine if hovering or not
+// fixes issue where tooltip still shows and gets stuck after dragging unless hovered somewhere
+function checkMovement(e) {
+  const el = document.getElementById('tooltip');
+  const x = e.clientX;
+  const y = e.clientY;
+
+  if (isHovering) {
+    el.className = 'displayBlock';
+    el.style.left = (x + 10) + 'px';
+    el.style.top = (y + 10) + 'px';
+  } else {
+    el.className = 'displayNone';
+  }
+
+  isHovering = false;
+}
+
+function setTooltip(object, x, y) {
+  const el = document.getElementById('tooltip');
+  if (object) {
+    const lat = parseFloat(object.coordinates.latitude).toFixed(3);
+    const lng = parseFloat(object.coordinates.longitude).toFixed(3);
+    isHovering = true;
+
+    ReactDOM.render(<Tooltip
+      province={object.province ? object.province : object.county}
+      country={object.country}
+      confirmed={object.latest.confirmed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+      deaths={object.latest.deaths.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+      lat={lat}
+      lng={lng}
+      update={convertToLocalTime(object.last_updated)}
+      />, el);
+  }
+}
+
+
 const scatterPlotLayer = (data, dataParameter) => new ScatterplotLayer({
   id: 'scatter',
   data: data.locations,
@@ -113,30 +154,6 @@ const textLayer = (data, dataParameter) => new TextLayer({
   getTextAnchor: 'middle',
   getAlignmentBaseline: 'center',
 });
-
-function setTooltip(object, x, y) {
-  const el = document.getElementById('tooltip');
-  if (object) {
-    const lat = parseFloat(object.coordinates.latitude).toFixed(3);
-    const lng = parseFloat(object.coordinates.longitude).toFixed(3);
-
-    ReactDOM.render(<Tooltip
-      province={object.province ? object.province : object.county}
-      country={object.country}
-      confirmed={object.latest.confirmed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-      deaths={object.latest.deaths.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-      lat={lat}
-      lng={lng}
-      update={convertToLocalTime(object.last_updated)}
-      />, document.getElementById('tooltip'));
-    // el.innerHTML = object.latest.confirmed;
-    el.style.display = 'block';
-    el.style.left = (x + 10) + 'px';
-    el.style.top = (y + 10) + 'px';
-  } else {
-    el.style.display = 'none';
-  }
-}
 
 
 export { scatterPlotLayer, hoverPlotLayer, heatMapLayer, textLayer, getInfo };

@@ -3,6 +3,7 @@
   border-radius: 15px;
   background-color: #000;
   opacity: 0.8;
+  min-width:150px;
 }
 
 .tooltip h1, .tooltip h2, .tooltip p {
