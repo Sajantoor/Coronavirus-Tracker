@@ -41,7 +41,6 @@ class GoogleMap extends React.Component {
       this.googleMap = this.createGoogleMap();
       this.getData();
       this.requestLocation();
-      window.google.maps.event.addDomListener(window, 'resize', this.resize);
     });
   }
 
@@ -64,8 +63,8 @@ class GoogleMap extends React.Component {
     this.googleMap.setZoom(5);
   }
 
-  createGoogleMap = () =>
-    new window.google.maps.Map(this.googleMapRef.current, {
+  createGoogleMap() {
+    let map =  new window.google.maps.Map(this.googleMapRef.current, {
       zoom: 2,
       minZoom: 2,
       center: {
@@ -77,6 +76,10 @@ class GoogleMap extends React.Component {
       draggableCursor: 'crosshair',
       gestureHandling: 'greedy',
     });
+
+    window.google.maps.event.addDomListener(window, 'resize', this.resize);
+    return map;
+  }
 
   getData() {
     const COVID19API_WORLD = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
@@ -135,8 +138,8 @@ class GoogleMap extends React.Component {
     const stateLayers = this.state.layers.length;
     const prevStateObj = {...prevState };
     // ignores layers to avoid max depth limit
-    prevStateObj.layers = 0;
     state.layers = 0;
+    prevStateObj.layers = 0;
     // init layers is both data sources have been fetched, ignores this if layers have been init
     if (this.state.usData && this.state.worldData && stateLayers === 0) {
       getInfo(data, this.state.dataParameter);
@@ -151,8 +154,7 @@ class GoogleMap extends React.Component {
     return (
       <div className="map-container">
         {!(this.state.usData && this.state.worldData) && <Loading/>}
-
-        <div id="tooltip" style={{position: 'absolute', zIndex: 3}}></div>
+        <div id="tooltip" className="displayNone" style={{position: 'absolute', zIndex: 3}}></div>
         <button
           style={{backgroundColor: this.state.heatMap ? '#FFF' : "#cfcfcf"}}
           onClick={() => this.setState({heatMap: !this.state.heatMap})}>
