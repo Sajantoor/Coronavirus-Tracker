@@ -16,6 +16,5 @@ async function fetchData(url) {
   return data;
 }
 
-
 export { fetchData };
 export default App;
