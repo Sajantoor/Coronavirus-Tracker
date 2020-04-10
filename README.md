@@ -11,6 +11,10 @@
 ## About
 > The COVID-19 Tracker project is used to visualize and track the COVID-19 (Coronavirus) pandemic. The goal of the project is making information about COVID-19 easily accessible and easy to understand for the public using data visualization. In its current state, the project features a scatterplot layer which changes colors based of the data point and a heat map layer which is weighted based of the value of the data point. It also features the ability to turn these layers on and off, switch between different data parameters such as confirmed cases or deaths and features a tooltip UI component which appears when the user hovers over an element.
 
+#### Screenshots
+![COVID-19 Tracker Screenshot](../blob/readme-assets/pictures/COVID-19-Tracker.png)
+![COVID-19 Tracker Screenshot](../blob/readme-assets/pictures/COVID-19-Tracker-2.png)
+
 ## Technologies
 
 #### ReactJS
@@ -62,4 +66,4 @@ npm start
 ```
 
 ## Contributions
-> If you're new to open source contributions read [this guide](https://opensource.guide/how-to-contribute/). Issues and pull requests are welcome! 
+> If you're new to open source contributions read [this guide](https://opensource.guide/how-to-contribute/). Issues and pull requests are welcome!
