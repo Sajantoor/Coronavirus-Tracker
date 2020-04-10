@@ -3,6 +3,7 @@ import React from 'react';
 import styles from './css/tooltip.css';
 
 class Tooltip extends React.Component {
+  // all data is passed via props
   render() {
     return(
       <div className="tooltip">

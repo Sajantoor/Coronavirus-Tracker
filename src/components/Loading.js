@@ -1,12 +1,13 @@
-
 import React from 'react';
 //eslint-disable-next-line
 import styles from './css/loading.css';
 
+// loading component
 class Loading extends React.Component {
   constructor(props){
     super(props);
     this.state = {
+      // discord style messages while loading, randomized each time
       messages: [
         "Stay home and practice social distancing!",
         "Social distancing is the best way to prevent the spread of COVID-19.",
@@ -15,10 +16,10 @@ class Loading extends React.Component {
         "Wash your hands regularly!",
         "Wash your hands for at least 20 seconds!",
       ],
-      index: 0,
+      index: 0, // random message index
     }
   }
-
+  // picks a random index from the array length
   pickRandom() {
     const index = Math.floor(Math.random()* this.state.messages.length);
     this.setState({index: index});

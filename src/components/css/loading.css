@@ -7,7 +7,6 @@
   height: 100vh;
 }
 
-
 .loading h1, .loading p {
   position: relative;
   top: 40vh;
@@ -23,7 +22,6 @@
 .loading p {
   font-weight: 300;
 }
-
 
 .progress {
   position: relative;
