@@ -3,6 +3,7 @@
 
 #### Table of Contents
  * [About](#About)
+ * [Motivation](#Motiivation)
  * [Technologies](#Technologies)
  * [Future Features](#Future-Features)
  * [Getting Started](#Getting-Started)
@@ -15,8 +16,10 @@
 ![COVID-19 Tracker Screenshot](../readme-assets/pictures/COVID-19-Tracker.png)
 ![COVID-19 Tracker Screenshot](../readme-assets/pictures/COVID-19-Tracker-2.png)
 
-## Technologies
+## Motivation 
+> The motivation for this project came from the inability for people to access accurate, up to date, unbiased, and easily digestible information. There's a lot of misinformation regarding this pandemic and this is a tool to counter that, providing the raw unbaised numbers without having to navigate through government websites. Many COVID-19 trackers have hard to read charts or tables and there's rarely any maps to digest and understand the data. Some maps only show certain countries and it's important to show information from the entire world as this is a worldwide pandemic. Many maps don't show the individual data points, instead clustering the data from each province or state. 
 
+## Technologies
 #### ReactJS
 > [ReactJS](https://reactjs.org/) is the web framework for this project. It's used due to its ease of creating front end components quickly with minimal code and its efficient updating and rendering.
 [React GitHub](https://github.com/facebook/react)
@@ -36,8 +39,11 @@
 
 ## Future Features
   * Recoveries are planned but not available yet to due [issues with the data source](https://github.com/ExpDev07/coronavirus-tracker-api/issues/161)
+  * Additional accurate sources for more data points in Asia and Europe
   * Infected data parameter option: Takes confirmed cases and subtracts deaths and recoveries
   * Updated UI and homepage
+  * Graphs to see if countries or states / provinces are "flattening the curve" 
+    * Logarithmic scale graphs
   * Deck.gl Text layer with data clustering as the default layer option for mobile
   * Table with sorted data with each countries' cases, deaths and recoveries
   * Data History and timeline
