@@ -3,7 +3,7 @@
 
 #### Table of Contents
  * [About](#About)
- * [Motivation](#Motiivation)
+ * [Motivation](#Motivation)
  * [Technologies](#Technologies)
  * [Future Features](#Future-Features)
  * [Getting Started](#Getting-Started)
@@ -61,7 +61,7 @@ git clone
 npm install
 ```
 
-* Get your Google Maps API key from the [Google Developers Console](https://console.developers.google.com/) and put it in a .env file.
+* Get your Google Maps API key from the [Google Developers Console](https://console.developers.google.com/) and put it in a `.env` file.
 ```
 REACT_APP_GOOGLE_API_KEY = <your API key>
 ```
