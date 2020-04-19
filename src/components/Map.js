@@ -6,8 +6,9 @@ import mapStyles from './map-styles';
 import styles from './css/map.css';
 import { fetchData } from '../App';
 import Loading from './Loading';
+import { getGoogleAPI } from '../Firebase';
+import { ReactComponent as GPS } from '../assets/icons/gps.svg';
 
-const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 // data from multiple sources
 let data = {
   latest: {},
@@ -35,13 +36,16 @@ class GoogleMap extends React.Component {
   componentDidMount() {
     // create the google map component and loads the script
     const googleMapScript = document.createElement('script');
-    googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&libraries=visualization`;
+    // gets the Google Maps API Key from firebase and creates the map
+    getGoogleAPI().then(function(value) {
+      const GOOGLE_MAP_API_KEY = value.data;
+      googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&libraries=visualization`;
+    });
+
     window.document.body.appendChild(googleMapScript);
     // initializes the map
     googleMapScript.addEventListener('load', () => {
       this.googleMap = this.createGoogleMap();
-      this.getData();
-      this.requestLocation();
     });
   }
 
@@ -66,9 +70,7 @@ class GoogleMap extends React.Component {
 
   // request the location of the user
   requestLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this.getLocation);
-    }
+    navigator.geolocation.getCurrentPosition(this.getLocation);
   }
 
   // changes the center to be the user's location to see data points close to them first
@@ -76,7 +78,7 @@ class GoogleMap extends React.Component {
     let lat = position.coords.latitude;
     let lng = position.coords.longitude;
     this.googleMap.setCenter({lat: lat, lng: lng});
-    this.googleMap.setZoom(5);
+    this.googleMap.setZoom(7);
   }
 
   // fetches the data from the apis
@@ -161,6 +163,10 @@ class GoogleMap extends React.Component {
     }
   }
 
+  componentWillMount() {
+    this.getData();
+  }
+
   render() {
     return (
       <div className="map-container">
@@ -183,6 +189,16 @@ class GoogleMap extends React.Component {
           style={{backgroundColor: (this.state.dataParameter === "deaths") ? '#FFF' : "#cfcfcf"}}
           onClick={() => this.setState({dataParameter: "deaths"})}>
           <span role="img" aria-label="deaths"> 💀 </span> </button>
+        {
+          navigator.geolocation &&
+          <button
+            className="location"
+            aria-label="Location"
+            onClick={() => this.requestLocation()}>
+            <GPS/>
+          </button>
+        }
+
 
         <div
           id="google-map"

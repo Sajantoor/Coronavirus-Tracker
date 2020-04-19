@@ -17,3 +17,8 @@ button, input[type="submit"], input[type="reset"] {
 	display: none;
 	opacity: 0;
 }
+
+h1, h2, h3, p, button {
+	font-display: swap;
+	font-family: 'Roboto', 'Arial', sans-serif;
+}

@@ -3,7 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/assets/Covid19Icon.ico"/>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"></noscript>
+    <link rel="preconnect" href="https://www.googletagmanager.com"/>
+    <link rel="preconnect" href="https://maps.googleapis.com"/>
+    <link rel="preconnect" href="https://firebaseinstallations.googleapis.com"/>
     <!-- Meta data --->
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="description" content="Visualize and track the COVID-19 (Coronavirus) pandemic with up to date and accurate information.">
@@ -29,11 +33,5 @@
     <div id="root">
       <div id="tooltip"></div>
     </div>
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="/__/firebase/7.14.0/firebase-app.js"></script>
-    <script src="/__/firebase/7.14.0/firebase-analytics.js"></script>
-
-    <!-- Initialize Firebase -->
-    <script src="/__/firebase/init.js"></script>
   </body>
 </html>

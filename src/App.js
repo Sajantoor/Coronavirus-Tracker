@@ -1,8 +1,6 @@
 import React from 'react';
 import './App.css';
 import GoogleMap from './components/Map';
-// eslint-disable-next-line
-import database from './Firebase';
 
 function App() {
   return (
