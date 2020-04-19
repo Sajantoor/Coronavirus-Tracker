@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+
 // Firebase configuration
  const firebaseConfig = {
    apiKey: process.env.REACT_APP_FIREBASE_API,
@@ -15,6 +16,6 @@ import firebase from 'firebase';
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
-const database = firebase.database();
+const getGoogleAPI = firebase.functions().httpsCallable('getGoogleAPI');
 
-export default database;
+export { getGoogleAPI };

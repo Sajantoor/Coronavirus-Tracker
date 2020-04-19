@@ -5,7 +5,6 @@ body {
 
 .map-container button {
   color: #565656;
-  font-family: 'Roboto', sans-serif;
   font-weight: 400;
   background-color: #FFF;
   font-size: 0.9em;
@@ -44,4 +43,10 @@ body {
   outline: none;
   appearance: none;
   z-index: 3;
+}
+
+#gps {
+  fill: #565656;
+  width: 20px;
+  height: 20px;
 }
