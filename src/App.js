@@ -17,5 +17,11 @@ async function fetchData(url) {
   return data;
 }
 
-export { fetchData };
+// converts the ISO 8601 timezone value from the data to the user's local time zone value
+function convertToLocalTime(value) {
+  let date = new Date(value);
+  return date.toLocaleString();
+}
+
+export { fetchData, convertToLocalTime };
 export default App;
