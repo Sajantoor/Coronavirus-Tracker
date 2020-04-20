@@ -64,12 +64,6 @@ function pickColor(value) {
   return color;
 }
 
-// converts the ISO 8601 timezone value from the data to the user's local time zone value
-function convertToLocalTime(value) {
-  let date = new Date(value);
-  return date.toLocaleString();
-}
-
 // check if the mouse is moving
 document.addEventListener('mousemove', checkMovement);
 let isHovering = false;
@@ -110,7 +104,7 @@ function setTooltip(object, x, y) {
       deaths={object.latest.deaths.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
       lat={lat}
       lng={lng}
-      update={convertToLocalTime(object.last_updated)}
+      update={object.last_updated}
       />, el);
   }
 }
@@ -123,13 +117,12 @@ const scatterPlotLayer = (data, dataParameter) => new ScatterplotLayer({
   filled: true,
   radiusMaxPixels: 7,
   radiusMinPixels: 3,
-  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude)],
+  getPosition: d => [d.coordinates.longitude, d.coordinates.latitude],
   getFillColor: d => pickColor(d.latest[dataParameter]),
   updateTriggers: {
     getFillColor: d => pickColor(d.latest[dataParameter]),
   }
 });
-
 
 // layer used to check if there is user hovering, radius is much bigger than scatterplot
 const hoverPlotLayer = (data, dataParameter) => new ScatterplotLayer({
@@ -139,7 +132,7 @@ const hoverPlotLayer = (data, dataParameter) => new ScatterplotLayer({
   filled: true,
   radiusMaxPixels: 50,
   radiusMinPixels: 30,
-  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude)],
+  getPosition: d => [d.coordinates.longitude, d.coordinates.latitude],
   onHover: info => setTooltip(info.object, info.x, info.y),
   pickable: true,
 });
@@ -147,19 +140,19 @@ const hoverPlotLayer = (data, dataParameter) => new ScatterplotLayer({
 const heatMapLayer = (data, dataParameter) => new HeatmapLayer({
   id: 'heat',
   data: data.locations,
-  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude)],
-  getWeight: d => parseInt(d.latest[dataParameter]),
+  getPosition: d => [d.coordinates.longitude, d.coordinates.latitude],
+  getWeight: d => d.latest[dataParameter],
   radiusPixels: 60,
   threshold: 0.005,
   updateTriggers: {
-    getWeight: d => parseInt(d.latest[dataParameter]),
+    getWeight: d => d.latest[dataParameter],
   }
 });
 
 const textLayer = (data, dataParameter) => new TextLayer({
   id: 'text',
   data: data.locations,
-  getPosition: d => [parseFloat(d.coordinates.longitude), parseFloat(d.coordinates.latitude)],
+  getPosition: d => [d.coordinates.longitude, d.coordinates.latitude],
   getText: d => d.latest[dataParameter].toString(),
   getSize: 20,
   getAngle: 0,
