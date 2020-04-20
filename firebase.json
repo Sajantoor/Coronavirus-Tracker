@@ -5,7 +5,7 @@
     ]
   },
   "hosting": {
-    "site": "covid19-tracker-64e31",
+    "site": "virustracker",
     "public": "build",
     "ignore": [
       "firebase.json",
