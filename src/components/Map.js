@@ -39,7 +39,6 @@ class GoogleMap extends React.Component {
     // gets the Google Maps API Key from firebase and creates the map
     getGoogleAPI().then(function(value) {
       const GOOGLE_MAP_API_KEY = value.data;
-      console.log(GOOGLE_MAP_API_KEY);
       googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&libraries=visualization`;
     });
 
