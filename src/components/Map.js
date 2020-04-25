@@ -24,7 +24,7 @@ class GoogleMap extends React.Component {
     this.state = {
       layers: [], // which layers are being used
       worldData: false, // check if world data is fetched
-      usData: false, // check if us data is fetched
+      usData: true, // check if us data is fetched
       dataParameter: "confirmed", // which dataParameter is currently displayed, confirmed, deaths or recovered
       heatMap: false, // layer booleans
       scatterPlot: true,
@@ -84,36 +84,59 @@ class GoogleMap extends React.Component {
   // fetches the data from the apis
   getData() {
     // sources
-    const COVID19API_WORLD = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
-    const COVID19API_US = "https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=csbs";
+    const COVID19API_WORLD = "https://coronavirus-tracker-api.herokuapp.com/all/";
+    // const COVID19API_US = "https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=csbs";
     // fetch world data and push to data object
     fetchData(COVID19API_WORLD).then(worldData => {
+      data.latest = worldData.latest;
+      data.latest.last_updated = worldData.confirmed.last_updated;
+
       // pushes to main data object
-      for (var i = 0; i < worldData.locations.length; i++) {
-        let obj = worldData.locations[i];
-        obj.coordinates.latitude = parseFloat(obj.coordinates.latitude);
-        obj.coordinates.longitude = parseFloat(obj.coordinates.longitude);
-        // removes all US data as US has it's own source and removes NULL island
-        if (obj.country !== "US" && obj.province !== "Grand Princess" && !(obj.coordinates.latitude === 0 && obj.coordinates.longitude === 0)) {
-          obj.last_updated = convertToLocalTime(obj.last_updated);
-          data.locations.push(obj);
-        }
+      for (var i = 0; i < worldData.confirmed.locations.length; i++) {
+        const confirmedObj = worldData.confirmed.locations[i];
+        const deathsObj = worldData.deaths.locations[i];
+        // const recoveredObj = worldData.recovered.locations[i];
+
+        const obj = {
+          country: confirmedObj.country,
+          country_code: confirmedObj.country_code,
+          province: confirmedObj.province,
+          coordinates: {
+            lat: parseFloat(confirmedObj.coordinates.lat),
+            long: parseFloat(confirmedObj.coordinates.long),
+          },
+          confirmed: {
+            history: confirmedObj.history,
+            latest: confirmedObj.latest,
+          },
+
+          deaths: {
+            history: deathsObj.history,
+            latest: deathsObj.latest,
+          },
+
+          // recovered: {
+          //   history: recoveredObj.history,
+          //   latest: recoveredObj.latest,
+          // }
+        };
+
+        data.locations.push(obj);
       }
 
-      data.latest = worldData.latest;
       this.setState({worldData: true});
     });
-    // fetches us data and push to data object
-    fetchData(COVID19API_US).then(USData => {
-      for (var i = 0; i < USData.locations.length; i++) {
-        USData.locations[i].last_updated = convertToLocalTime(USData.locations[i].last_updated);
-        USData.locations[i].coordinates.latitude = parseFloat(USData.locations[i].coordinates.latitude);
-        USData.locations[i].coordinates.longitude = parseFloat(USData.locations[i].coordinates.longitude);
-        data.locations.push(USData.locations[i]);
-      }
-
-      this.setState({usData: true});
-    });
+    // // fetches us data and push to data object
+    // fetchData(COVID19API_US).then(USData => {
+    //   for (var i = 0; i < USData.locations.length; i++) {
+    //     USData.locations[i].last_updated = convertToLocalTime(USData.locations[i].last_updated);
+    //     USData.locations[i].coordinates.latitude = parseFloat(USData.locations[i].coordinates.latitude);
+    //     USData.locations[i].coordinates.longitude = parseFloat(USData.locations[i].coordinates.longitude);
+    //     data.locations.push(USData.locations[i]);
+    //   }
+    //
+    //   this.setState({usData: true});
+    // });
   }
 
   // resize the map on window's resize

@@ -17,8 +17,8 @@ function getInfo(data, dataParameter) {
   info.average = 0;
   // gets the value by the dataParameter
   for (var i = 0; i < data.locations.length; i++) {
-    if (data.locations[i].latest[dataParameter] > info.largest) {
-      info.largest = data.locations[i].latest[dataParameter];
+    if (data.locations[i][dataParameter].latest > info.largest) {
+      info.largest = data.locations[i][dataParameter].latest;
     }
   }
   // gets the average case value
@@ -90,21 +90,23 @@ function checkMovement(e) {
 }
 
 // function called onHover for deck gl layers, used to check if the user is hovering and render tooltip accordingly
-function setTooltip(object, x, y) {
+function setTooltip(object, x, y, last_updated) {
   const el = document.getElementById('tooltip');
   if (object) {
-    const lat = parseFloat(object.coordinates.latitude).toFixed(3);
-    const lng = parseFloat(object.coordinates.longitude).toFixed(3);
+
+    console.log(object);
+    const lat = object.coordinates.lat.toFixed(2);
+    const lng = object.coordinates.long.toFixed(2);
     isHovering = true;
 
     ReactDOM.render(<Tooltip
       province={object.province ? object.province : object.county}
       country={object.country}
-      confirmed={object.latest.confirmed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-      deaths={object.latest.deaths.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+      confirmed={object.confirmed.latest.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+      deaths={object.deaths.latest.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
       lat={lat}
       lng={lng}
-      update={object.last_updated}
+      update={last_updated}
       />, el);
   }
 }
@@ -117,10 +119,10 @@ const scatterPlotLayer = (data, dataParameter) => new ScatterplotLayer({
   filled: true,
   radiusMaxPixels: 7,
   radiusMinPixels: 3,
-  getPosition: d => [d.coordinates.longitude, d.coordinates.latitude],
-  getFillColor: d => pickColor(d.latest[dataParameter]),
+  getPosition: d => [d.coordinates.long, d.coordinates.lat],
+  getFillColor: d => pickColor(d[dataParameter].latest),
   updateTriggers: {
-    getFillColor: d => pickColor(d.latest[dataParameter]),
+    getFillColor: d => pickColor(d[dataParameter].latest),
   }
 });
 
@@ -132,34 +134,21 @@ const hoverPlotLayer = (data, dataParameter) => new ScatterplotLayer({
   filled: true,
   radiusMaxPixels: 50,
   radiusMinPixels: 30,
-  getPosition: d => [d.coordinates.longitude, d.coordinates.latitude],
-  onHover: info => setTooltip(info.object, info.x, info.y),
+  getPosition: d => [d.coordinates.long, d.coordinates.lat],
+  onHover: info => setTooltip(info.object, info.x, info.y, data.latest.last_updated),
   pickable: true,
 });
 
 const heatMapLayer = (data, dataParameter) => new HeatmapLayer({
   id: 'heat',
   data: data.locations,
-  getPosition: d => [d.coordinates.longitude, d.coordinates.latitude],
-  getWeight: d => d.latest[dataParameter],
+  getPosition: d => [d.coordinates.long, d.coordinates.lat],
+  getWeight: d => d[dataParameter].latest,
   radiusPixels: 60,
   threshold: 0.005,
   updateTriggers: {
-    getWeight: d => d.latest[dataParameter],
+    getWeight: d => d[dataParameter].latest,
   }
 });
 
-const textLayer = (data, dataParameter) => new TextLayer({
-  id: 'text',
-  data: data.locations,
-  getPosition: d => [d.coordinates.longitude, d.coordinates.latitude],
-  getText: d => d.latest[dataParameter].toString(),
-  getSize: 20,
-  getAngle: 0,
-  getColor: [255, 255, 255, 255],
-  getTextAnchor: 'middle',
-  getAlignmentBaseline: 'center',
-});
-
-
-export { scatterPlotLayer, hoverPlotLayer, heatMapLayer, textLayer, getInfo };
+export { scatterPlotLayer, hoverPlotLayer, heatMapLayer, getInfo };
