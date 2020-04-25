@@ -89,7 +89,9 @@ class GoogleMap extends React.Component {
     // fetch world data and push to data object
     fetchData(COVID19API_WORLD).then(worldData => {
       data.latest = worldData.latest;
-      data.latest.last_updated = worldData.confirmed.last_updated;
+      // converts the ISO 8601 timezone value from the data to the user's local time zone value
+      let date = new Date(worldData.confirmed.last_updated);
+      data.latest.last_updated = date.toLocaleString();
 
       // pushes to main data object
       for (var i = 0; i < worldData.confirmed.locations.length; i++) {
