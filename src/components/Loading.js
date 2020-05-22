@@ -9,9 +9,8 @@ class Loading extends React.Component {
     this.state = {
       // discord style messages while loading, randomized each time
       messages: [
-        "Stay home and practice social distancing!",
         "Social distancing is the best way to prevent the spread of COVID-19.",
-        "Stay home, stay safe!",
+        "Stay safe!",
         "Stay at least 2 metres away from others...",
         "Wash your hands regularly!",
         "Wash your hands for at least 20 seconds!",
