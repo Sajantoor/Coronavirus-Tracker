@@ -34,19 +34,20 @@ class GoogleMap extends React.Component {
   googleMapRef = React.createRef();
 
   componentDidMount() {
+    const _this = this;
     // create the google map component and loads the script
     const googleMapScript = document.createElement('script');
     // gets the Google Maps API Key from firebase and creates the map
     getGoogleAPI().then(function(value) {
       const GOOGLE_MAP_API_KEY = value.data;
       googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&libraries=visualization`;
-    });
-
-    window.document.body.appendChild(googleMapScript);
-    // initializes the map
-    googleMapScript.addEventListener('load', () => {
-      this.googleMap = this.createGoogleMap();
-    });
+    
+      window.document.body.appendChild(googleMapScript);
+      // initializes the map
+      googleMapScript.addEventListener('load', () => {
+        _this.googleMap = _this.createGoogleMap();
+      });
+    })
   }
 
   // creates the google map component
