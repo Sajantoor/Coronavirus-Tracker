@@ -71,22 +71,22 @@ let isHovering = false;
 // deck gl doesn't have any way to check if not hovering, so looks at mouse movement vs deck gl's hovering to determine if hovering or not
 // fixes issue where tooltip still shows and gets stuck after dragging unless hovered somewhere
 function checkMovement(e) {
-  // const el = document.getElementById('tooltip');
-  // // mouse x and y
-  // const x = e.clientX;
-  // const y = e.clientY;
+  const el = document.getElementById('tooltip');
+  // mouse x and y
+  const x = e.clientX;
+  const y = e.clientY;
 
-  // // change tooltip style if hovering
-  // if (isHovering) {
-  //   el.className = 'displayBlock';
-  //   el.style.left = (x + 10) + 'px';
-  //   el.style.top = (y + 10) + 'px';
-  // } else {
-  //   // stop displaying the element
-  //   el.className = 'displayNone';
-  // }
+  // change tooltip style if hovering
+  if (isHovering) {
+    el.className = 'displayBlock';
+    el.style.left = (x + 10) + 'px';
+    el.style.top = (y + 10) + 'px';
+  } else {
+    // stop displaying the element
+    el.className = 'displayNone';
+  }
 
-  // isHovering = false;
+  isHovering = false;
 }
 
 // function called onHover for deck gl layers, used to check if the user is hovering and render tooltip accordingly
