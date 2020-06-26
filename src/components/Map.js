@@ -6,7 +6,6 @@ import mapStyles from './map-styles';
 import styles from './css/map.css';
 import { fetchData, convertToLocalTime } from '../App';
 import Loading from './Loading';
-import { getGoogleAPI } from '../Firebase';
 import { ReactComponent as GPS } from '../assets/icons/gps.svg';
 
 // data from multiple sources
@@ -34,20 +33,21 @@ class GoogleMap extends React.Component {
   googleMapRef = React.createRef();
 
   componentDidMount() {
+    this.getData();
+
     const _this = this;
     // create the google map component and loads the script
     const googleMapScript = document.createElement('script');
     // gets the Google Maps API Key from firebase and creates the map
-    getGoogleAPI().then(function(value) {
-      const GOOGLE_MAP_API_KEY = value.data;
-      googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&libraries=visualization`;
-    
-      window.document.body.appendChild(googleMapScript);
-      // initializes the map
-      googleMapScript.addEventListener('load', () => {
-        _this.googleMap = _this.createGoogleMap();
-      });
-    })
+    const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API;
+    googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&libraries=visualization`;
+  
+    window.document.body.appendChild(googleMapScript);
+    // initializes the map
+    googleMapScript.addEventListener('load', () => {
+      _this.googleMap = _this.createGoogleMap();
+    });
+  
   }
 
   // creates the google map component
@@ -58,6 +58,14 @@ class GoogleMap extends React.Component {
       center: {
         lat:  30,
         lng:  0,
+      },
+      restriction: {
+        latLngBounds: {
+            north: 85,
+            south: -85,
+            west: -180,
+            east: 180
+        }
       },
       disableDefaultUI: true,
       styles: mapStyles,
@@ -170,10 +178,6 @@ class GoogleMap extends React.Component {
     } else if ((JSON.stringify(state) !== JSON.stringify(prevStateObj)) && stateLayers !== 0) {
       this.changeLayers();
     }
-  }
-
-  componentWillMount() {
-    this.getData();
   }
 
   render() {
