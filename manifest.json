@@ -1,0 +1,25 @@
+{
+  "short_name": "Virus Tracker",
+  "name": "Coronavirus Tracker",
+  "icons": [
+    {
+      "src": "/assets/Covid19Icon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/assets/Covid19-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/assets/Covid19-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
