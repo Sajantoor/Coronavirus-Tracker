@@ -93,8 +93,8 @@ class GoogleMap extends React.Component {
   // fetches the data from the apis
   getData() {
     // sources
-    const COVID19API_WORLD = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
-    const COVID19API_US = "https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=csbs";
+    const COVID19API_WORLD = "https://covid-tracker-us.herokuapp.com/v2/locations?source=jhu&timelines=false";
+    const COVID19API_US = "https://covid-tracker-us.herokuapp.com/v2/locations?source=csbs&timelines=false";
     // fetch world data and push to data object
     fetchData(COVID19API_WORLD).then(worldData => {
       // pushes to main data object
